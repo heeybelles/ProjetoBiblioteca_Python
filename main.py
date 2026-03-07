@@ -1,19 +1,20 @@
 #Nomes: Eduarda e Ellen
-
-from Biblioteca import Biblioteca
-from Livro import Livro
-from Usuario import Usuario
+from biblioteca import Biblioteca
+from livro import Livro, LivroDigital
+from usuario import Usuario
 
 biblioteca = Biblioteca()
 
 while True:
     print("\n===== SISTEMA DA BIBLIOTECA =====")
-    print("1 - Cadastrar livro")
-    print("2 - Cadastrar usuário")
-    print("3 - Realizar empréstimo")
-    print("4 - Devolver livro")
-    print("5 - Listar livros disponíveis")
-    print("6 - Sair")
+    print("1 - Cadastrar livro físico")
+    print("2 - Cadastrar livro digital")
+    print("3 - Cadastrar usuário")
+    print("4 - Realizar empréstimo")
+    print("5 - Devolver livro")
+    print("6 - Listar livros disponíveis")
+    print("7 - Listar livros emprestados")
+    print("8 - Sair")
 
     opcao = input("Escolha uma opção: ")
 
@@ -21,84 +22,59 @@ while True:
         titulo = input("Título: ")
         autor = input("Autor: ")
         ano = int(input("Ano: "))
-
         livro = Livro(titulo, autor, ano)
         biblioteca.adicionar_livro(livro)
-
-        print("Livro cadastrado com sucesso!")
+        print("Livro físico cadastrado com sucesso!")
 
     elif opcao == "2":
-        nome = input("Nome do usuário: ")
-        matricula = input("Matrícula: ")
-
-        usuario = Usuario(nome, matricula)
-        biblioteca.cadastrar_usuario(usuario)
-
-        print("Usuário cadastrado!")
+        titulo = input("Título: ")
+        autor = input("Autor: ")
+        ano = int(input("Ano: "))
+        tamanho = float(input("Tamanho do arquivo (MB): "))
+        livro = LivroDigital(titulo, autor, ano, tamanho)
+        biblioteca.adicionar_livro(livro)
+        print("Livro digital cadastrado com sucesso!")
 
     elif opcao == "3":
-        matricula = input("Matrícula do usuário: ")
-        titulo = input("Título do livro: ")
-
-        usuario_encontrado = None
-        livro_encontrado = None
-
-        for usuario in biblioteca.usuarios:
-            if usuario.matricula == matricula:
-                usuario_encontrado = usuario
-                break
-
-        if usuario_encontrado is None:
-            print("Usuário não encontrado.")
-            continue
-
-        for livro in biblioteca.livros:
-            if livro.titulo == titulo:
-                livro_encontrado = livro
-                break
-
-        if livro_encontrado is None:
-            print("Livro não encontrado.")
-            continue
-
-        usuario_encontrado.pegar_emprestado(livro_encontrado)
+        nome = input("Nome do usuário: ")
+        matricula = input("Matrícula: ")
+        usuario = Usuario(nome, matricula)
+        biblioteca.cadastrar_usuario(usuario)
+        print("Usuário cadastrado!")
 
     elif opcao == "4":
-
-        while True:
-            matricula = input("Matrícula do usuário: ")
-
-            usuario_encontrado = None
-            for usuario in biblioteca.usuarios:
-                if usuario.matricula == matricula:
-                    usuario_encontrado = usuario
-                    break
-
-            if usuario_encontrado:
-                break
-            else:
-                print("Usuário não encontrado. Digite novamente.")
-
-        while True:
-            titulo = input("Título do livro: ")
-
-            livro_encontrado = None
-            for livro in usuario_encontrado.livros_emprestados:
-                if livro.titulo == titulo:
-                    livro_encontrado = livro
-                    break
-
-            if livro_encontrado:
-                break
-            else:
-                print("Este usuário não possui esse livro. Digite novamente.")
-
-        usuario_encontrado.devolver_livro(livro_encontrado)
+        matricula = input("Matrícula do usuário: ")
+        titulo = input("Título do livro: ")
+        usuario = biblioteca.buscar_usuario(matricula)
+        livro = biblioteca.buscar_livro(titulo)
+        if not usuario:
+            print("Usuário não encontrado.")
+            continue
+        if not livro:
+            print("Livro não encontrado.")
+            continue
+        usuario.pegar_emprestado(livro)
 
     elif opcao == "5":
-        biblioteca.listar_livros_disponiveis()
+        matricula = input("Matrícula do usuário: ")
+        titulo = input("Título do livro: ")
+        usuario = biblioteca.buscar_usuario(matricula)
+        livro = biblioteca.buscar_livro(titulo)
+        if not usuario:
+            print("Usuário não encontrado.")
+            continue
+        if not livro:
+            print("Livro não encontrado.")
+            continue
+        usuario.devolver_livro(livro)
 
     elif opcao == "6":
+        biblioteca.listar_livros_disponiveis()
+
+    elif opcao == "7":
+        biblioteca.listar_livros_emprestados()
+
+    elif opcao == "8":
         print("Saindo do sistema...")
         break
 
